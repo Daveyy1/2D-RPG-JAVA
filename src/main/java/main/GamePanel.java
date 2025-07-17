@@ -1,3 +1,7 @@
+package main;
+
+import entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,7 +11,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int ORIGINALTILESIZE = 16; // 16x16 pixel tiles
     final int SCALE = 3; // scales the tiles by 3 bc 16x16 is very small on modern screens
 
-    final int tileSize = ORIGINALTILESIZE * SCALE; // 48x48 tiles
+    public final int tileSize = ORIGINALTILESIZE * SCALE; // 48x48 tiles
     final int maxScreenCol = 40; // 16 tiles wide
     final int maxScreenRow = 22; // 12 tiles high, 16:9 ratio on screen
     final int screenWidth = tileSize * maxScreenCol; // 1920 px
@@ -18,6 +22,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     KeyHandler keyH = new KeyHandler();
     Thread gameThread; // main gameThread to keep the program running, needed for drawing the screen at a certain fps
+    Player player = new Player(this, keyH);
 
     // set Players default position
     int playerX = 100;
@@ -77,15 +82,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-        if(keyH.upPressed){
-            playerY -= playerSpeed; // Y goes down when going up and vice versa
-        } else if(keyH.downPressed){
-            playerY += playerSpeed;
-        } else if(keyH.leftPressed){
-            playerX -= playerSpeed;
-        } else if(keyH.rightPressed){
-            playerX += playerSpeed;
-        }
+        player.update();
     }
 
     // Graphics is a class used to draw things on the screen
@@ -94,9 +91,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor(Color.WHITE);
-
-        g2d.fillRect(playerX, playerY, tileSize, tileSize); // good practice to use variables and not fixed numbers
+        player.draw(g2d);
 
         g2d.dispose(); // good practise to save memory after usage
     }
