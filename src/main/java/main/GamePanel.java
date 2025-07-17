@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,22 +13,19 @@ public class GamePanel extends JPanel implements Runnable{
     final int SCALE = 3; // scales the tiles by 3 bc 16x16 is very small on modern screens
 
     public final int tileSize = ORIGINALTILESIZE * SCALE; // 48x48 tiles
-    final int maxScreenCol = 40; // 16 tiles wide
-    final int maxScreenRow = 22; // 12 tiles high, 16:9 ratio on screen
-    final int screenWidth = tileSize * maxScreenCol; // 1920 px
-    final int screenHeight = tileSize * maxScreenRow; // 1080 px
+    public final int maxScreenCol = 40; // 16 tiles wide
+    public final int maxScreenRow = 22; // 12 tiles high, 16:9 ratio on screen
+    public final int screenWidth = tileSize * maxScreenCol; // 1920 px
+    public final int screenHeight = tileSize * maxScreenRow; // 1080 px
 
     // FPS
     int fps = 60;
 
+    TileManager tm = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread; // main gameThread to keep the program running, needed for drawing the screen at a certain fps
     Player player = new Player(this, keyH);
 
-    // set Players default position
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4; // 4 px per frame movement
 
 
     public GamePanel() {
@@ -90,6 +88,8 @@ public class GamePanel extends JPanel implements Runnable{
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
+
+        tm.draw(g2d); // first tiles, then player because of layering. If vice versa, player would be hidden
 
         player.draw(g2d);
 
