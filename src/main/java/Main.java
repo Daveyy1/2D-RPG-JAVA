@@ -15,5 +15,7 @@ public class Main {
         window.pack(); // sizes the window and all its subco
         window.setVisible(true);
 
+        gamePanel.startGameThread();
+
     }
 }
