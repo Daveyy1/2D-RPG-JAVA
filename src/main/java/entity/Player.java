@@ -25,6 +25,8 @@ public class Player extends Entity{
           screenX = gp.screenWidth/2 - (gp.tileSize/2); // adjustment for sprite size
           screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
+          collisionBox = new Rectangle(10, 16, 32, 32); // 8px to the right and 16 px down from top left of sprite
+
           setDefaultValues();
           getPlayerImage();
      }
@@ -53,24 +55,51 @@ public class Player extends Entity{
      }
 
      public void update(){
+          boolean moving = false;
+    
           if(keyH.upPressed){
                direction = "up";
-               worldY -= speed; // Y goes down when going up and vice versa
+               moving = true;
           } else if(keyH.downPressed){
                direction = "down";
-               worldY += speed;
+               moving = true;
           } else if(keyH.leftPressed){
                direction = "left";
-               worldX -= speed;
+               moving = true;
           } else if(keyH.rightPressed){
                direction = "right";
-               worldX += speed;
+               moving = true;
+          }
+
+          // Only move if a key is pressed
+          if(moving) {
+               // CHECK TILE COLLISION
+               collision = false;
+               gp.cChecker.checkTile(this);
+
+               // IF COLLISION IS FALSE, PLAYER CAN MOVE
+               if(!collision){
+                    switch (direction){
+                         case "up":
+                              worldY -= speed;
+                              break;
+                         case "down":
+                              worldY += speed;
+                              break;
+                         case "left":
+                              worldX -= speed;
+                              break;
+                         case "right":
+                              worldX += speed;
+                              break;
+                    }
+               }
           }
 
           if(keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
                spriteCounter++;
           }
-          if(spriteCounter > 15){ // every 15 frames, the other walking sprite gets called
+          if(spriteCounter > 15){
                if(spriteNum == 1){
                     spriteNum = 2;
                } else if(spriteNum == 2){

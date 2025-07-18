@@ -1,6 +1,7 @@
 package main;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Main {
     public static void main(String[] args){
@@ -13,11 +14,33 @@ public class Main {
         GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
 
-        window.setLocationRelativeTo(null);
-        window.pack(); // sizes the window and all its subco
+        // Get all available monitors
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] devices = ge.getScreenDevices();
+        
+        // Choose which monitor to use (0 = first monitor, 1 = second monitor, etc.)
+        int monitorIndex = 0; // Change this to 0 for first monitor, 1 for second, etc.
+        
+        if (monitorIndex < devices.length) {
+            GraphicsDevice targetDevice = devices[monitorIndex];
+            
+            // Get the bounds of the target monitor
+            Rectangle bounds = targetDevice.getDefaultConfiguration().getBounds();
+            
+            // Position the window on the target monitor
+            window.setLocation(bounds.x, bounds.y);
+            window.pack();
+            
+            // Set to fullscreen on the target monitor
+            window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        } else {
+            // Fallback if monitor index is invalid
+            window.setLocationRelativeTo(null);
+            window.pack();
+            window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+        
         window.setVisible(true);
-
         gamePanel.startGameThread();
-
     }
 }
