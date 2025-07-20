@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -31,8 +32,9 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler keyH = new KeyHandler();
     Thread gameThread; // main gameThread to keep the program running, needed for drawing the screen at a certain fps
     public CollisionChecker cChecker = new CollisionChecker(this);
+    public AssetManager assetManager = new AssetManager(this);
     public Player player = new Player(this, keyH);
-
+    public SuperObject[] obj = new SuperObject[10];
 
 
     public GamePanel() {
@@ -41,6 +43,10 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);  // all drawing from this component (Panel) will be done offscreen in a painting buffer -> improves performance
         this.addKeyListener(keyH);
         this.setFocusable(true); // when running, focuses on this window
+    }
+
+    public void setupGame(){
+        assetManager.setObject();
     }
 
     public void startGameThread(){
@@ -96,8 +102,17 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2d = (Graphics2D) g;
 
+        // TILES
         tm.draw(g2d); // first tiles, then player because of layering. If vice versa, player would be hidden
 
+        // OBJECTS
+        for(int i = 0; i < obj.length; i++){
+            if(obj[i] != null){
+                obj[i].draw(g2d, this);
+            }
+        }
+
+        //PLAYER
         player.draw(g2d);
 
         g2d.dispose(); // good practise to save memory after usage
